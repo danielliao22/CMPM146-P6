@@ -208,8 +208,16 @@ class Individual_Grid(object):
         # Leaving first and last columns alone...
         # do crossover with other
 
-        sfit = self._fitness
-        ofit = other._fitness
+        # Basic idea is to loop through 1 block at a time and randomly choose a block from one of the two parents, but
+        # have the odds of a specific parent being chosen be based off of that parent's fitness. So if the fitnesses are
+        # 60 and 40, then the child genome should have 60% of it's DNA from parent 1 and 40% from parent 2. We run the
+        # sanity check afterwards to make sure there aren't any invalid block placements
+
+        # Might want to instead select things by group, i.e. take pipes from parent 1, platforms from parent 2,
+        # staircases from parent 1, enemies from parent 2, etc
+
+        sfit = self.fitness()
+        ofit = other.fitness()
 
         pop = [1, 0]
         weights = [sfit, ofit]
