@@ -40,9 +40,6 @@ def get_column(level, column):
 class Individual_Grid(object):
     __slots__ = ["genome", "_fitness"]
 
-    # def __repr__(self):
-    #     return self.genome
-
     def __init__(self, genome):
         self.genome = copy.deepcopy(genome)
         self._fitness = None
@@ -210,15 +207,58 @@ class Individual_Grid(object):
         new_genome = copy.deepcopy(self.genome)
         # Leaving first and last columns alone...
         # do crossover with other
+
+        sfit = self._fitness
+        ofit = other._fitness
+
+        pop = [1, 0]
+        weights = [sfit, ofit]
+
         left = 1
         right = width - 1
         for y in range(height-1):
             for x in range(left, right):
                 # STUDENT Which one should you take?  Self, or other?  Why?
                 # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
-                if random.random() > 0.5:
-                    new_genome
+                if random.choices(pop, weights=weights, k=1)[0]:
+                    if new_genome[y][x] == '|':
+                        new_genome[y][x] = '-'
+                else:
+                    new_genome[y][x] = other[y][x]
+                    if new_genome[y][x] == '|':
+                        new_genome[y][x] = '-'
+
+        # This is the sanity check copy/pasted from random_individual
+        spawnable = ['X', 'M', '?', 'B']
+        for row in range(height):
+            for col in range(width):
+
+                # No floating pipes. Also, all blocks to the right of a pipe should be air
+                if g[row][col] == 'T':
+                    if col == width - 1:
+                        g[row][col] = '-'
+                    elif col != 0:
+                        if 'T' in get_column(g, col - 1):
+                            g[row][col] = '-'
+                        else:
+                            g[row][col + 1] = '-'
+                            for i in range(height - (row + 2)):
+                                g[i + row + 1][col] = '|'
+                                g[i + row + 1][col + 1] = '-'
+                    else:
+                        g[row][col] = '-'
+
+                # No floating enemies
+                if g[row][col] == 'E':
+                    if g[row + 1][col] not in spawnable:
+                        g[row][col] = '-'
+
+                # You need an empty space under a question mark block in order to jump into it
+                if g[row][col] == 'M' or g[row][col] == '?' and g[row + 1][col] != '-':
+                    g[row][col] = '-'
+
         # do mutation; note we're returning a one-element tuple here
+        mutate(new_genome)
         return (Individual_Grid(new_genome),)
 
     # Turn the genome into a level string (easy for this genome)
