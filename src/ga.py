@@ -582,10 +582,49 @@ Individual = Individual_Grid
 
 
 def generate_successors(population):
-    results = []
+    results = [] # return list of evolved levels
     # STUDENT Design and implement this
+
+    roulette_chosen = roulette_selection(population)
+    tournament_chosen = tournament_selection(population)
+
+    
     # Hint: Call generate_children() on some individuals and fill up results.
     return results
+
+def roulette_selection(population):
+    selected  = []
+
+    return selected
+
+def tournament_selection(population):
+    if len(population) < 2:
+        return population
+    
+    winners = []
+    randomized = random.shuffle(copy.deepcopy(population))
+
+    for i in range(0, math.floor(len(population)/2)):
+        contestant_1 = population[i]
+        contestant_2 = population[i+1]
+        if contestant_1._fitness > contestant_2._fitness:
+            winners.append(contestant_1)
+        else:
+            winners.append(contestant_2)
+    
+    #MAY NOT NEED THE CODE RIGHT BELOW
+    # if the population size was an odd number then the last player didn't get to compete
+    # make them compete with a random participant
+    # contestant_1 = population[-1]
+    # contestant_2 = random.choices(population)
+    # if (len(population) % 2) != 0:
+    #     if contestant_1._fitness > contestant_2._fitness:
+    #         winners.append(contestant_1)
+    #     else:
+    #         winners.append(contestant_2)
+
+    return winners
+
 
 
 def listToString(s):
@@ -615,6 +654,7 @@ def ga():
                       else Individual.empty_individual()
                       for _g in range(pop_limit)]
         # But leave this line alone; we have to reassign to population because we get a new population that has more cached stuff in it.
+        # sets the initialize fitness
         population = pool.map(Individual.calculate_fitness,
                               population,
                               batch_size)
