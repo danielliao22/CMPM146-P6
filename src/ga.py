@@ -235,7 +235,7 @@ class Individual_Grid(object):
                     if new_genome[y][x] == '|':
                         new_genome[y][x] = '-'
                 else:
-                    new_genome[y][x] = other[y][x]
+                    new_genome[y][x] = other.genome[y][x]
                     if new_genome[y][x] == '|':
                         new_genome[y][x] = '-'
 
@@ -252,7 +252,7 @@ class Individual_Grid(object):
                         if 'T' in get_column(new_genome, col - 1):
                             new_genome[row][col] = '-'
                         else:
-                            g[row][col + 1] = '-'
+                            new_genome[row][col + 1] = '-'
                             for i in range(height - (row + 2)):
                                 new_genome[i + row + 1][col] = '|'
                                 new_genome[i + row + 1][col + 1] = '-'
@@ -269,7 +269,7 @@ class Individual_Grid(object):
                     new_genome[row][col] = '-'
 
         # do mutation; note we're returning a one-element tuple here
-        mutate(new_genome)
+        self.mutate(new_genome)
         return (Individual_Grid(new_genome),)
 
     # Turn the genome into a level string (easy for this genome)
@@ -585,25 +585,52 @@ def generate_successors(population):
     results = [] # return list of evolved levels
     # STUDENT Design and implement this
 
-    roulette_chosen = roulette_selection(population)
-    tournament_chosen = tournament_selection(population)
+    tournament_chosen = tournament_selection(population) # get half the population that are winners 
+    # roulette_chosen = roulette_selection(population)
+    elitist_chosen = elitist_selection(population)
 
-    
+    # mate the determined successors to get new children
+    for index in range(0, len(tournament_chosen)):
+        parent1 = tournament_chosen[index]
+        parent2 = elitist_chosen[index]
+        results.append(parent1.generate_children(parent2))
+        results.append(parent2.generate_children(parent1))
+        # we generate the children, but are they ever part of final results?
+
     # Hint: Call generate_children() on some individuals and fill up results.
     return results
 
+# still needs work, not sure how to do roulette_selection with negative values
+# references: https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
+# https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)#Methods_of_Selection_(Genetic_Algorithm)
+# https://en.wikipedia.org/wiki/Fitness_proportionate_selection
 def roulette_selection(population):
     selected  = []
+    # get sum of fitnesses
+    fitnessSum = 0
+    for ind in population:
+        fitnessSum += ind.fitness()
+
+    # set up probabilites list and 
+    probabilities = []
+    sorted_population = sorted(population, key=lambda obj: obj.fitness())[::-1]
+    for ind in sorted_population:
+        probability = ind.fitness()/fitnessSum
+        probabilities.append((probability, ind))
+
+    # iterate 
+    for i in range(0, math.floor(len(population)/2)): 
+        return fitnessSum
 
     return selected
 
 def tournament_selection(population):
+    # if there's not enough individuals to complete just return itself
     if len(population) < 2:
         return population
     
     winners = []
     randomized = random.shuffle(copy.deepcopy(population))
-
     for i in range(0, math.floor(len(population)/2)):
         contestant_1 = population[i]
         contestant_2 = population[i+1]
@@ -612,20 +639,25 @@ def tournament_selection(population):
         else:
             winners.append(contestant_2)
     
-    #MAY NOT NEED THE CODE RIGHT BELOW
-    # if the population size was an odd number then the last player didn't get to compete
-    # make them compete with a random participant
-    # contestant_1 = population[-1]
-    # contestant_2 = random.choices(population)
-    # if (len(population) % 2) != 0:
-    #     if contestant_1._fitness > contestant_2._fitness:
-    #         winners.append(contestant_1)
-    #     else:
-    #         winners.append(contestant_2)
+    # if the population size was an odd number then the last player automatically gets passed through
+    if (len(population) % 2) != 0:
+        winners.append(populatoin[-1])
 
     return winners
 
+# returns the top half of the population based on fitness
+def elitist_selection(population):
+    elitist = []
+    sorted_pop = sorted(population, key=lambda obj: obj.fitness())
+    for i in range(0, math.floor(len(population)/2)):
+        elitist.append(sorted_pop[i])
 
+    # if the population size was an odd number then add one more individual
+    if (len(population) % 2) != 0:
+        index = math.floor(len(population)/2)
+        elitist.append(sorted_pop[index])
+
+    return elitist
 
 def listToString(s):
     # initialize an empty string
