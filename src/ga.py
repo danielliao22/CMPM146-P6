@@ -158,7 +158,7 @@ class Individual_Grid(object):
         mutateAtAllChance = 1  # a float between 0 and 1. 0 will never mutate and 1 will always mutate
         mut = 0.1   # the likelyhood of any specific block being mutated
         mut_dist_x = 2    # the maximum distance that a block will be moved in the x direction
-        mut_dist_y = 2  # the maximum distance that a block will be moved in the x direction
+        mut_dist_y = 2  # the maximum distance that a block will be moved in the y direction
         change_to = [   # list of blocks that a source block might be changed to
             "-",  # an empty space
             "X",  # a solid wall
@@ -228,6 +228,9 @@ class Individual_Grid(object):
             for x in range(left, right):
                 # STUDENT Which one should you take?  Self, or other?  Why?
                 # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
+
+                #For each tile randomly decide (w/ weights) which parent to set the tile should pull from. 
+                # If the y,x coord happens to be a pipe then simply make it an empty space tile  
                 if random.choices(pop, weights=weights, k=1)[0]:
                     if new_genome[y][x] == '|':
                         new_genome[y][x] = '-'
@@ -242,28 +245,28 @@ class Individual_Grid(object):
             for col in range(width):
 
                 # No floating pipes. Also, all blocks to the right of a pipe should be air
-                if g[row][col] == 'T':
+                if new_genome[row][col] == 'T':
                     if col == width - 1:
-                        g[row][col] = '-'
+                        new_genome[row][col] = '-'
                     elif col != 0:
-                        if 'T' in get_column(g, col - 1):
-                            g[row][col] = '-'
+                        if 'T' in get_column(new_genome, col - 1):
+                            new_genome[row][col] = '-'
                         else:
                             g[row][col + 1] = '-'
                             for i in range(height - (row + 2)):
-                                g[i + row + 1][col] = '|'
-                                g[i + row + 1][col + 1] = '-'
+                                new_genome[i + row + 1][col] = '|'
+                                new_genome[i + row + 1][col + 1] = '-'
                     else:
-                        g[row][col] = '-'
+                        new_genome[row][col] = '-'
 
                 # No floating enemies
-                if g[row][col] == 'E':
-                    if g[row + 1][col] not in spawnable:
-                        g[row][col] = '-'
+                if new_genome[row][col] == 'E':
+                    if new_genome[row + 1][col] not in spawnable:
+                        new_genome[row][col] = '-'
 
                 # You need an empty space under a question mark block in order to jump into it
-                if g[row][col] == 'M' or g[row][col] == '?' and g[row + 1][col] != '-':
-                    g[row][col] = '-'
+                if new_genome[row][col] == 'M' or new_genome[row][col] == '?' and new_genome[row + 1][col] != '-':
+                    new_genome[row][col] = '-'
 
         # do mutation; note we're returning a one-element tuple here
         mutate(new_genome)
