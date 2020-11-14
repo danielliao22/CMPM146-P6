@@ -319,8 +319,10 @@ class Individual_Grid(object):
         g[15][:] = ["X"] * width
         g[14][0] = "m"
         g[7][-1] = "v"
-        g[8:14][-1] = ["f"] * 6
-        g[14:16][-1] = ["X", "X"]
+        for col in range(8, 14):
+            g[col][-1] = "f"
+        for col in range(14, 16):
+            g[col][-1] = "X"
 
         # Now we sanity check to prevent floating pipes, enemies, etc
         spawnable = ['X', 'M', '?', 'B']
@@ -597,7 +599,7 @@ def listToString(s):
 
 def ga():
     # STUDENT Feel free to play with this parameter
-    pop_limit = 8
+    pop_limit = 16
     # Code to parallelize some computations
     batches = os.cpu_count()
     if pop_limit % batches != 0:
@@ -619,8 +621,10 @@ def ga():
         start = time.time()
         now = start
         print("Use ctrl-c to terminate this loop manually.")
+        count = 1
         for ind in population:
-            print("\nIndividual:")
+            print("\nIndividual",count,": ")
+            count += 1
             for i in ind.genome:
                 print(listToString(i))
         try:
@@ -643,11 +647,12 @@ def ga():
                 if stop_condition:
                     break
                 # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
+                print("pop length", len(population))
                 gentime = time.time()
-                next_population = generate_successors(population)
+                next_population = generate_successors(population) # SELECTION STRATEGY
                 gendone = time.time()
                 print("Generated successors in:", gendone - gentime, "seconds")
-                # Calculate fitness in batches in parallel
+                # CALCULATE FITNESS in batches in parallel
                 next_population = pool.map(Individual.calculate_fitness,
                                            next_population,
                                            batch_size)
