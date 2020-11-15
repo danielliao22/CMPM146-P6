@@ -593,10 +593,8 @@ def generate_successors(population):
     for index in range(0, len(tournament_chosen)):
         parent1 = tournament_chosen[index]
         parent2 = elitist_chosen[index]
-        results.append(parent1.generate_children(parent2))
-        results.append(parent2.generate_children(parent1))
-        # we generate the children, but are they ever part of final results?
-
+        results.append(parent1.generate_children(parent2)[0])
+        results.append(parent2.generate_children(parent1)[0])
     # Hint: Call generate_children() on some individuals and fill up results.
     return results
 
