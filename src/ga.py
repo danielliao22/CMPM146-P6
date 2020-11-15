@@ -716,8 +716,8 @@ def ga():
                             f.write("".join(row) + "\n")
                 generation += 1
                 # STUDENT Determine stopping condition
-                stop_condition = False
-                if stop_condition:
+                stop_condition = time.time()-start) < 60
+                if (stop_condition):
                     break
                 # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
                 print("pop length", len(population))
