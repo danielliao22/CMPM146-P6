@@ -224,6 +224,9 @@ class Individual_Grid(object):
 
         left = 1
         right = width - 1
+
+        enemy_count = 0
+        enemy_max = 6
         for y in range(height-1):
             for x in range(left, right):
                 # STUDENT Which one should you take?  Self, or other?  Why?
@@ -258,10 +261,16 @@ class Individual_Grid(object):
                                 new_genome[i + row + 1][col + 1] = '-'
                     else:
                         new_genome[row][col] = '-'
+                    # Get rid tall pipes
+                    if row < 14:
+                        for i in range(row, height):
+                            new_genome[row][col] = '-'
 
-                # No floating enemies
+
+                # No floating enemies or enemies more than enemy_max
                 if new_genome[row][col] == 'E':
-                    if new_genome[row + 1][col] not in spawnable:
+                    enemy_count += 1
+                    if new_genome[row + 1][col] not in spawnable or enemy_count > enemy_max:
                         new_genome[row][col] = '-'
 
                 # You need an empty space under a question mark block in order to jump into it
@@ -270,6 +279,16 @@ class Individual_Grid(object):
 
         # do mutation; note we're returning a one-element tuple here
         self.mutate(new_genome)
+
+        # ensure these essential tiles are placed
+        new_genome[15][:] = ["X"] * width
+        new_genome[14][0] = "m"
+        new_genome[7][-1] = "v"
+        for col in range(8, 14):
+            new_genome[col][-1] = "f"
+        for col in range(14, 16):
+            new_genome[col][-1] = "X"
+
         return (Individual_Grid(new_genome),)
 
     # Turn the genome into a level string (easy for this genome)
@@ -671,7 +690,7 @@ def listToString(s):
 
 def ga():
     # STUDENT Feel free to play with this parameter
-    pop_limit = 16
+    pop_limit = 480
     # Code to parallelize some computations
     batches = os.cpu_count()
     if pop_limit % batches != 0:
@@ -680,8 +699,8 @@ def ga():
     with mpool.Pool(processes=os.cpu_count()) as pool:
         init_time = time.time()
         # STUDENT (Optional) change population initialization
-        population = [Individual.random_individual() if random.random() < 0.9
-                      else Individual.empty_individual()
+        population = [Individual.empty_individual() if random.random() < 0.9
+                      else Individual.random_individual()
                       for _g in range(pop_limit)]
         # But leave this line alone; we have to reassign to population because we get a new population that has more cached stuff in it.
         # sets the initialize fitness
@@ -716,7 +735,7 @@ def ga():
                             f.write("".join(row) + "\n")
                 generation += 1
                 # STUDENT Determine stopping condition
-                stop_condition = time.time()-start > 60
+                stop_condition = time.time()-start > 60*3
                 if (stop_condition):
                     break
                 # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
