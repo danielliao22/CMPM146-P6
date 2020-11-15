@@ -156,13 +156,8 @@ class Individual_Grid(object):
         left = 1
         right = width - 1
 
-<<<<<<< HEAD
         mutateAtAllChance = 0.75  # a float between 0 and 1. 0 will never mutate and 1 will always mutate
         mut = 0.15   # the likelyhood of any specific block being mutated
-=======
-        mutateAtAllChance = 1  # a float between 0 and 1. 0 will never mutate and 1 will always mutate
-        mut = 0.05   # the likelyhood of any specific block being mutated
->>>>>>> d75af7fe86a97ccc3323451cab58793195a6b920
         mut_dist_x = 2    # the maximum distance that a block will be moved in the x direction
         mut_dist_y = 2  # the maximum distance that a block will be moved in the y direction
         change_to = [   # list of blocks that a source block might be changed to
