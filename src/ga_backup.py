@@ -119,15 +119,14 @@ class Individual_Grid(object):
                 # print("dest_block:", dest_block)
                 if dest_block not in ['m', 'v', 'f', 'T', '|'] and g[rdest][cdest-1] != '|':
                     if block == 'T':
-                        # print("Block:", block, "rdest:", rdest, "cdest:", cdest)
-                        if dest_block != '|' and rdest <= height-5:
-                            g[row][col] = dest_block
-                        else:
-                            return
+                        print("Block:", block, "rdest:", rdest, "cdest:", cdest)
                         for i in range(height):
                             if g[i][col] == '|':
                                 g[i][col] = '-'
-                            # g[row][col] = '-'
+                        if dest_block != '|':
+                            g[row][col] = dest_block
+                        else:
+                            g[row][col] = '-'
                         g[rdest][cdest] = block
                         if cdest == width - 1:
                             g[rdest][cdest] = '-'
@@ -156,13 +155,8 @@ class Individual_Grid(object):
         left = 1
         right = width - 1
 
-<<<<<<< HEAD
-        mutateAtAllChance = 0.75  # a float between 0 and 1. 0 will never mutate and 1 will always mutate
-        mut = 0.15   # the likelyhood of any specific block being mutated
-=======
         mutateAtAllChance = 1  # a float between 0 and 1. 0 will never mutate and 1 will always mutate
         mut = 0.05   # the likelyhood of any specific block being mutated
->>>>>>> d75af7fe86a97ccc3323451cab58793195a6b920
         mut_dist_x = 2    # the maximum distance that a block will be moved in the x direction
         mut_dist_y = 2  # the maximum distance that a block will be moved in the y direction
         change_to = [   # list of blocks that a source block might be changed to
@@ -176,12 +170,12 @@ class Individual_Grid(object):
         ]
 
         weights = [
-            35,  # an empty space
+            25,  # an empty space
             1,  # a solid wall
             0.1,  # a question mark block with a coin
             0.1,  # a question mark block with a mushroom
             2,  # a breakable block
-            1,  # a coin
+            3,  # a coin
             1.5  # an enemy
         ]
 
@@ -263,11 +257,9 @@ class Individual_Grid(object):
                 # No floating pipes. Also, all blocks to the right of a pipe should be air
                 if new_genome[row][col] == 'T':
                     if col == width - 1:
-                        # print("deleting pipe 1")
                         new_genome[row][col] = '-'
                     elif col != 0:
                         if 'T' in get_column(new_genome, col - 1):
-                            # print("deleting pipe 2")
                             new_genome[row][col] = '-'
                         else:
                             new_genome[row][col + 1] = '-'
@@ -275,13 +267,11 @@ class Individual_Grid(object):
                                 new_genome[i + row + 1][col] = '|'
                                 new_genome[i + row + 1][col + 1] = '-'
                     else:
-                        # print("deleting pipe 3")
                         new_genome[row][col] = '-'
                     # Get rid tall pipes
-                    # if row < 14:
-                        # print("deleting pipe 4")
-                        # for i in range(row, height):
-                        #     new_genome[row][col] = '-'
+                    if row < 14:
+                        for i in range(row, height):
+                            new_genome[row][col] = '-'
 
 
                 # No floating enemies or enemies more than enemy_max
@@ -308,11 +298,6 @@ class Individual_Grid(object):
             new_genome[col][-1] = "f"
         for col in range(14, 16):
             new_genome[col][-1] = "X"
-
-        parents = [self, other]
-        best_parent = random.choices(parents, weights=weights, k=1)[0].genome
-        for col in range(width-1):
-            new_genome[-1][col] = best_parent[-1][col]
 
         return (Individual_Grid(new_genome),)
 
@@ -351,14 +336,14 @@ class Individual_Grid(object):
             "E"     # an enemy
         ]
         weights = [
-            35,  # an empty space
+            25,  # an empty space
             1,  # a solid wall
             0.1,# a question mark block with a coin
             0.1,# a question mark block with a mushroom
             2,  # a breakable block
-            1,  # a coin
+            3,  # a coin
             0,  # a pipe segment
-            0.6,  # a pipe top
+            0.1,  # a pipe top
             1.5   # an enemy
         ]
         g = [random.choices(pop, weights=weights, k=width) for row in range(height)]
@@ -371,34 +356,14 @@ class Individual_Grid(object):
         for col in range(14, 16):
             g[col][-1] = "X"
 
-        num_pits = math.ceil(random.random() * 5)
-        pit_lengths = {}
-        pit_start_locations = random.choices(range(1, width-2), k=num_pits)
-
-        # print("num_pits:", num_pits)
-
-        for i in pit_start_locations:
-            pit_lengths[i] = math.ceil(random.random()*3)
-
-        # print("pit_start:", pit_start_locations)
-        # print("pit_lengths:", pit_lengths)
-
-        for loc in pit_start_locations:
-            for i in range(0, pit_lengths[loc]):
-                # print("setting", loc + i, "to air")
-                g[-1][loc + i] = '-'
-
         # Now we sanity check to prevent floating pipes, enemies, etc
         spawnable = ['X', 'M', '?', 'B']
         for row in range(height):
             for col in range(width):
 
-                # No floating pipes. Also, all blocks to the right of a pipe should be air also don't make pipes taller
-                # than 5
+                # No floating pipes. Also, all blocks to the right of a pipe should be air
                 if g[row][col] == 'T':
                     if col == width-1:
-                        g[row][col] = '-'
-                    elif row <= height - 5:
                         g[row][col] = '-'
                     elif col != 0:
                         if 'T' in get_column(g, col-1):
@@ -759,33 +724,30 @@ def ga():
         now = start
         print("Use ctrl-c to terminate this loop manually.")
         count = 1
-        # for ind in population:
-        #     print("\nIndividual",count,": ")
-        #     count += 1
-        #     for i in ind.genome:
-        #         print(listToString(i))
+        for ind in population:
+            print("\nIndividual",count,": ")
+            count += 1
+            for i in ind.genome:
+                print(listToString(i))
         try:
             while True:
                 now = time.time()
                 # Print out statistics
                 if generation > 0:
-                    # print("Generation:", str(generation))
+                    print("Generation:", str(generation))
                     best = max(population, key=Individual.fitness)
-                    print("\nGeneration:", str(generation))
+                    print("Generation:", str(generation))
                     print("Max fitness:", str(best.fitness()))
                     print("Average generation time:", (now - start) / generation)
                     print("Net time:", now - start)
                     with open("levels/last.txt", 'w') as f:
                         for row in best.to_level():
                             f.write("".join(row) + "\n")
-                    print("Best Individual:")
-                    for line in best.genome:
-                        print(listToString(line))
                 generation += 1
                 # STUDENT Determine stopping condition
-                # stop_condition = time.time()-start > 60*3
-                # if (stop_condition):
-                #     break
+                stop_condition = time.time()-start > 60*3
+                if (stop_condition):
+                    break
                 # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
                 print("pop length", len(population))
                 gentime = time.time()
@@ -806,6 +768,8 @@ def ga():
 
 if __name__ == "__main__":
     final_gen = sorted(ga(), key=Individual.fitness, reverse=True)
+    for ind in final_gen:
+        print(ind)
     best = final_gen[0]
     print("Best fitness: " + str(best.fitness()))
     now = time.strftime("%m_%d_%H_%M_%S")
