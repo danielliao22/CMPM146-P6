@@ -156,7 +156,7 @@ class Individual_Grid(object):
         right = width - 1
 
         mutateAtAllChance = 1  # a float between 0 and 1. 0 will never mutate and 1 will always mutate
-        mut = 0.1   # the likelyhood of any specific block being mutated
+        mut = 0.05   # the likelyhood of any specific block being mutated
         mut_dist_x = 2    # the maximum distance that a block will be moved in the x direction
         mut_dist_y = 2  # the maximum distance that a block will be moved in the y direction
         change_to = [   # list of blocks that a source block might be changed to
@@ -215,6 +215,13 @@ class Individual_Grid(object):
 
         # Might want to instead select things by group, i.e. take pipes from parent 1, platforms from parent 2,
         # staircases from parent 1, enemies from parent 2, etc
+        blocks = [
+            "X",    # a solid wall
+            "?",    # a question mark block with a coin
+            "M",    # a question mark block with a mushroom
+            "B",    # a breakable block
+        ]
+
 
         sfit = self.fitness()
         ofit = other.fitness()
@@ -275,6 +282,9 @@ class Individual_Grid(object):
 
                 # You need an empty space under a question mark block in order to jump into it
                 if new_genome[row][col] == 'M' or new_genome[row][col] == '?' and new_genome[row + 1][col] != '-':
+                    new_genome[row][col] = '-'
+                # Remove blocks that are 1 tile away from another block since they can't be passed through
+                if row > 2 and new_genome[row][col] in blocks and new_genome[row-1][col] == '-' and new_genome[row-2][col] in blocks:
                     new_genome[row][col] = '-'
 
         # do mutation; note we're returning a one-element tuple here
