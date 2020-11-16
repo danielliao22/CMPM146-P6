@@ -122,7 +122,6 @@ class Individual_Grid(object):
                         for i in range(height):
                             if g[i][col] == '|':
                                 g[i][col] = '-'
-                            # g[row][col] = '-'
                         g[rdest][cdest] = block
                         if cdest == width - 1:
                             g[rdest][cdest] = '-'
@@ -140,17 +139,11 @@ class Individual_Grid(object):
                         g[row][col] = dest_block
                         g[rdest][cdest] = block
 
-
-        """CODE BETWEEN THESE LINES IS FOR TESTING PURPOSES ONLY, PLEASE COMMENT OUT LATER"""
-        # changePipeHeight(genome, 0, 85, -1)
-        # moveBlock(genome, 0, 85, 7, 2)
-        """CODE BETWEEN THESE LINES IS FOR TESTING PURPOSES ONLY, PLEASE COMMENT OUT LATER"""
-
         left = 1
         right = width - 1
 
-        mutateAtAllChance = 0.75  # a float between 0 and 1. 0 will never mutate and 1 will always mutate
-        mut = 0.15   # the likelyhood of any specific block being mutated
+        mutateAtAllChance = 0.1  # a float between 0 and 1. 0 will never mutate and 1 will always mutate
+        mut = 0.05   # the likelyhood of any specific block being mutated
         mut_dist_x = 2    # the maximum distance that a block will be moved in the x direction
         mut_dist_y = 2  # the maximum distance that a block will be moved in the y direction
         change_to = [   # list of blocks that a source block might be changed to

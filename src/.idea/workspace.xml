@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5ec1338f-136e-473c-9fde-6997a1c3936e" name="Default Changelist" comment="" />
+    <list default="true" id="5ec1338f-136e-473c-9fde-6997a1c3936e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/ga.py" beforeDir="false" afterPath="$PROJECT_DIR$/ga.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,36 +15,21 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ga.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2728">
-              <caret line="972" column="9" selection-start-line="972" selection-start-column="9" selection-end-line="972" selection-end-column="9" />
+            <state relative-caret-position="525">
+              <caret line="123" column="47" selection-start-line="123" selection-start-column="47" selection-end-line="123" selection-end-column="47" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
                 <element signature="e#175#576#0" />
                 <element signature="e#614#769#0" />
-                <element signature="e#839#17031#0" />
                 <element signature="e#1150#1940#0" />
                 <element signature="e#2038#2129#0" />
-                <element signature="e#2260#8306#0" />
-                <element signature="e#3967#6026#0" />
-                <element signature="e#8411#13212#0" />
-                <element signature="e#13487#13773#0" />
-                <element signature="e#13832#17031#0" />
-                <element signature="e#16603#37311#0" />
-                <element signature="e#17039#19306#0" />
-                <element signature="e#37384#38089#0" />
-                <element signature="e#40407#43587#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/metrics.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
+                <element signature="e#7991#12395#0" />
+                <element signature="e#16603#37516#0" />
+                <element signature="e#17039#19295#0" />
+                <element signature="e#20081#26915#0" />
+                <element signature="e#26965#27556#0" />
+                <element signature="e#27627#29890#0" />
+                <element signature="e#29949#31262#0" />
               </folding>
             </state>
           </provider>
@@ -51,18 +38,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="560">
+            <state relative-caret-position="646">
               <caret line="38" column="18" selection-start-line="38" selection-start-column="18" selection-end-line="38" selection-end-column="18" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pathfinding.py">
-          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -178,9 +160,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/pathfinding.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/metrics.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="493">
@@ -191,9 +170,12 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pathfinding.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
+        <state relative-caret-position="646">
           <caret line="38" column="18" selection-start-line="38" selection-start-column="18" selection-end-line="38" selection-end-column="18" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
@@ -203,24 +185,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ga.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2728">
-          <caret line="972" column="9" selection-start-line="972" selection-start-column="9" selection-end-line="972" selection-end-column="9" />
+        <state relative-caret-position="525">
+          <caret line="123" column="47" selection-start-line="123" selection-start-column="47" selection-end-line="123" selection-end-column="47" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
             <element signature="e#175#576#0" />
             <element signature="e#614#769#0" />
-            <element signature="e#839#17031#0" />
             <element signature="e#1150#1940#0" />
             <element signature="e#2038#2129#0" />
-            <element signature="e#2260#8306#0" />
-            <element signature="e#3967#6026#0" />
-            <element signature="e#8411#13212#0" />
-            <element signature="e#13487#13773#0" />
-            <element signature="e#13832#17031#0" />
-            <element signature="e#16603#37311#0" />
-            <element signature="e#17039#19306#0" />
-            <element signature="e#37384#38089#0" />
-            <element signature="e#40407#43587#0" />
+            <element signature="e#7991#12395#0" />
+            <element signature="e#16603#37516#0" />
+            <element signature="e#17039#19295#0" />
+            <element signature="e#20081#26915#0" />
+            <element signature="e#26965#27556#0" />
+            <element signature="e#27627#29890#0" />
+            <element signature="e#29949#31262#0" />
           </folding>
         </state>
       </provider>
