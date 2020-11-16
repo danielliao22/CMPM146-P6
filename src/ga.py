@@ -86,8 +86,6 @@ class Individual_Grid(object):
             if amount > 0:
                 for row in range(amount):
                     row += prow
-                    print("lookin at", row)
-                    print("amount+prow:", amount+prow)
                     if row == height-1:
                         break
                     elif row + 1 != amount+prow:
@@ -113,13 +111,10 @@ class Individual_Grid(object):
             block = g[row][col]
             rdest = row + ramt
             cdest = col + camt
-            # print("Block:", block, "rdest:", rdest, "cdest:", cdest)
             if 0 <= rdest < height-1 and 0 <= cdest < width and block not in ['m', 'v', 'f']:
                 dest_block = g[rdest][cdest]
-                # print("dest_block:", dest_block)
                 if dest_block not in ['m', 'v', 'f', 'T', '|'] and g[rdest][cdest-1] != '|':
                     if block == 'T':
-                        # print("Block:", block, "rdest:", rdest, "cdest:", cdest)
                         if dest_block != '|' and rdest <= height-5:
                             g[row][col] = dest_block
                         else:
@@ -144,8 +139,6 @@ class Individual_Grid(object):
                     else:
                         g[row][col] = dest_block
                         g[rdest][cdest] = block
-            # else:
-                # print("out of range or illegal move\n")
 
 
         """CODE BETWEEN THESE LINES IS FOR TESTING PURPOSES ONLY, PLEASE COMMENT OUT LATER"""
@@ -192,7 +185,6 @@ class Individual_Grid(object):
         ]
 
         if mutateAtAllChance < random.random():
-            # print("Did not mutate")
             return genome
 
         for y in range(height-1):
@@ -258,11 +250,9 @@ class Individual_Grid(object):
                 # No floating pipes. Also, all blocks to the right of a pipe should be air
                 if new_genome[row][col] == 'T':
                     if col == width - 1:
-                        # print("deleting pipe 1")
                         new_genome[row][col] = '-'
                     elif col != 0:
                         if 'T' in get_column(new_genome, col - 1):
-                            # print("deleting pipe 2")
                             new_genome[row][col] = '-'
                         else:
                             new_genome[row][col + 1] = '-'
@@ -270,14 +260,7 @@ class Individual_Grid(object):
                                 new_genome[i + row + 1][col] = '|'
                                 new_genome[i + row + 1][col + 1] = '-'
                     else:
-                        # print("deleting pipe 3")
                         new_genome[row][col] = '-'
-                    # Get rid tall pipes
-                    # if row < 14:
-                        # print("deleting pipe 4")
-                        # for i in range(row, height):
-                        #     new_genome[row][col] = '-'
-
 
                 # No floating enemies or enemies more than enemy_max
                 if new_genome[row][col] == 'E':
@@ -370,17 +353,11 @@ class Individual_Grid(object):
         pit_lengths = {}
         pit_start_locations = random.choices(range(1, width-2), k=num_pits)
 
-        # print("num_pits:", num_pits)
-
         for i in pit_start_locations:
             pit_lengths[i] = math.ceil(random.random()*3)
 
-        # print("pit_start:", pit_start_locations)
-        # print("pit_lengths:", pit_lengths)
-
         for loc in pit_start_locations:
             for i in range(0, pit_lengths[loc]):
-                # print("setting", loc + i, "to air")
                 g[-1][loc + i] = '-'
 
         # Now we sanity check to prevent floating pipes, enemies, etc
@@ -476,36 +453,47 @@ class Individual_DE(object):
             self.calculate_fitness()
         return self._fitness
 
-    # def get_stairs(self):
-    #     """Returns a list of columns that have stairs in them"""
-    #     # 6_stairs: (x, type, height, ascend/descend)
-    #     columns = []
-    #     for i in self.genome:
-    #         if i[1] == "6_stairs":
-    #             for j in range(i[2] - 1):
-    #                 columns.append(i[0] + j)
-    #     return columns
-    #
-    # def get_pipes(self):
-    #     """Returns a list in the form of [(pipe1x, pipe1y), (pipe2x, pipe2y)...] for all pipes in genome"""
-    #     pipes = []
-    #     for i in self.genome:
-    #         if i[1] == "7_pipe":
-    #             pipes.append((i[0], i[2]))
-    #     return pipes
+    def get_stairs(self):
+        """Returns a list of columns that have stairs in them"""
+        # 6_stairs: (x, type, height, ascend/descend)
+        columns = []
+        for i in self.genome:
+            if i[1] == "6_stairs":
+                for j in range(i[2] - 1):
+                    columns.append(i[0] + 2 + j)
+        return columns
+
+    def get_pipes(self):
+        """Returns a list in the form of [(pipe1x, pipe1y), (pipe2x, pipe2y)...] for all pipes in genome"""
+        pipes = []
+        for i in self.genome:
+            if i[1] == "7_pipe":
+                pipes.append(i[0])
+        return pipes
 
     def mutate(self, new_genome):
         # STUDENT How does this work?  Explain it in your writeup.
         # STUDENT consider putting more constraints on this, to prevent generating weird things
+
+        # these will be used to prevent mutate from mutating to an invalid genome
+        pipes = self.get_pipes()
+        stairs = self.get_stairs()
+
+        # 10% chance to mutate, 90% chance to do nothing
         if random.random() < 0.1 and len(new_genome) > 0:
-        # if True:
+
+            # this part selects a single element from the genome at random
             to_change = random.randint(0, len(new_genome) - 1)
             de = new_genome[to_change]
             new_de = de
             x = de[0]
             de_type = de[1]
+
+            # choice is how much to mutate. the larger choice is, the more the element will be mutated
             choice = random.random()
+
             if de_type == "4_block":
+                # move blocks in both axes and change breakability
                 y = de[2]
                 breakable = de[3]
                 if choice < 0.33:
@@ -516,6 +504,7 @@ class Individual_DE(object):
                     breakable = not de[3]
                 new_de = (x, de_type, y, breakable)
             elif de_type == "5_qblock":
+                # move ? blocks in both axes and change contents
                 y = de[2]
                 has_powerup = de[3]  # boolean
                 if choice < 0.33:
@@ -526,6 +515,7 @@ class Individual_DE(object):
                     has_powerup = not de[3]
                 new_de = (x, de_type, y, has_powerup)
             elif de_type == "3_coin":
+                # move coins
                 y = de[2]
                 if choice < 0.5:
                     x = offset_by_upto(x, width / 8, min=1, max=width - 2)
@@ -533,13 +523,37 @@ class Individual_DE(object):
                     y = offset_by_upto(y, height / 2, min=0, max=height - 1)
                 new_de = (x, de_type, y)
             elif de_type == "7_pipe":
+                # move pipes
                 h = de[2]
-                if choice < 0.5:
-                    x = offset_by_upto(x, width / 8, min=1, max=width - 2)
+                did_succeed = False
+                for attempt in range(10):
+                    succeeded = True
+                    # choose amount to move by
+                    if choice < 0.5:
+                        x = offset_by_upto(x, width / 8, min=1, max=width - 2)
+                    else:
+                        h = offset_by_upto(h, 2, min=2, max=height - 4)
+                    # if new pipe conflicts with stairs, try again
+                    if x in stairs or x+1 in stairs:
+                        succeeded = False
+                    # if new pipe goes off screen, try again
+                    elif x < 2 or x > width - 2:
+                        succeeded = False
+                    # if new pipe conflicts with other pipes, try again
+                    elif x - 1 in pipes or x in pipes or x + 1 in pipes:
+                        succeeded = False
+                    if succeeded:
+                        did_succeed = True
+                        break
+                    else:
+                        # need to choose a new mutate amount
+                        choice = random.random()
+                if did_succeed:
+                    new_de = (x, de_type, h)
                 else:
-                    h = offset_by_upto(h, 2, min=2, max=height - 4)
-                new_de = (x, de_type, h)
+                    new_de = de
             elif de_type == "0_hole":
+                # move holes
                 w = de[2]
                 if choice < 0.5:
                     x = offset_by_upto(x, width / 8, min=1, max=width - 2)
@@ -547,16 +561,54 @@ class Individual_DE(object):
                     w = offset_by_upto(w, 4, min=1, max=width - 2)
                 new_de = (x, de_type, w)
             elif de_type == "6_stairs":
+                # move stairs, change height, change ascend/descend
                 h = de[2]
                 dx = de[3]  # -1 or 1
-                if choice < 0.33:
-                    x = offset_by_upto(x, width / 8, min=1, max=width - 2)
-                elif choice < 0.66:
-                    h = offset_by_upto(h, 8, min=1, max=height - 4)
+
+                # get a list of my stair locations
+                my_locations = []
+                for i in range(de[0] - 1):
+                    my_locations.append(i + de[2] + 2)
+                # get a list of all other stair locations
+                other_locations = []
+                for i in stairs:
+                    if i not in my_locations:
+                        other_locations.append(i)
+
+                # Here we will try to mutate the stairs 10 times. If all 10 attempts fail, then give up
+                did_succeed = False
+                for attempt in range(10):
+                    succeeded = True
+                    if choice < 0.33:
+                        x = offset_by_upto(x, width / 8, min=1, max=width - 2)
+                    elif choice < 0.66:
+                        h = offset_by_upto(h, 8, min=2, max=8)
+                    else:
+                        dx = -dx
+                    # sanity check time
+                    new_locations = []
+                    # get location of new mutated stairs
+                    for i in range(h):
+                        new_locations.append(i + x + 2)
+                    # if new stairs overlap with other stairs or pipes, try again
+                    for i in new_locations:
+                        if i in pipes or i in other_locations:
+                            succeeded = False
+                    # if new stairs go off screen, try again
+                    if x < 2 or max(new_locations) > width - 2:
+                        succeeded = False
+                    if succeeded:
+                        did_succeed = True
+                        break
+                    else:
+                        # need to choose a new mutate amount
+                        choice = random.random()
+                if did_succeed:
+                    new_de = (x, de_type, h, dx)
                 else:
-                    dx = -dx
-                new_de = (x, de_type, h, dx)
+                    new_de = de
             elif de_type == "1_platform":
+                # move platforms, change length, and change block type
                 w = de[2]
                 y = de[3]
                 madeof = de[4]  # from "?", "X", "B"
@@ -570,6 +622,7 @@ class Individual_DE(object):
                     madeof = random.choice(["?", "X", "B"])
                 new_de = (x, de_type, w, y, madeof)
             elif de_type == "2_enemy":
+                # do not do anything to enemies
                 pass
             new_genome.pop(to_change)
             heapq.heappush(new_genome, new_de)
@@ -661,18 +714,30 @@ class Individual_DE(object):
                                                         # location is x + 2 and the actual length is length - 1
         # 7_pipe    (x, type, y)
 
+        # weights = [
+        #     0.2,    # hole
+        #     0.5,    # platform
+        #     0.4,    # enemy
+        #     0.7,    # coin
+        #     0.5,    # block
+        #     0.2,    # qblock
+        #     0.7,    # stairs
+        #     0.6     # pipe
+        # ]
+
         weights = [
-            0.2,    # hole
-            0.5,    # platform
-            0.4,    # enemy
-            0.7,    # coin
-            0.5,    # block
-            0.2,    # qblock
-            0.7,    # stairs
-            0.6     # pipe
+            0,  # hole
+            0,  # platform
+            0,  # enemy
+            0,  # coin
+            0,  # block
+            0,  # qblock
+            0.5,  # stairs
+            0.6  # pipe
         ]
 
-        elt_count = random.randint(8, 160)
+        # elt_count = random.randint(8, 160)
+        elt_count = random.randint(30, 40)
         g = []
         stair_locs = [] # this will keep track of the locations of all the stairs as we generate them rather than having
         # to search for them every time
@@ -690,7 +755,7 @@ class Individual_DE(object):
             (random.randint(1, width - 2), "3_coin", random.randint(1, height - 1)),
             (random.randint(1, width - 2), "4_block", random.randint(1, height - 1), random.choice([True, False])),
             (random.randint(1, width - 2), "5_qblock", random.randint(1, height - 1), random.choice([True, False])),
-            (random.randint(1, width - 2), "6_stairs", random.randint(1, 8), random.choice([-1, 1])),
+            (random.randint(1, width - 2), "6_stairs", random.randint(2, 8), random.choice([-1, 1])),
             (random.randint(1, width - 2), "7_pipe", random.randint(2, 4))],
             weights=weights, k=1)[0]
 
@@ -717,7 +782,6 @@ class Individual_DE(object):
                     continue
             # pipes need space
             elif elem[1] == "7_pipe":
-                print("about to add pipe at", elem[0])
                 if elem[0] in pipe_locs or elem[0] + 1 in pipe_locs or elem [0] - 1 in pipe_locs:
                     continue
                 else:
