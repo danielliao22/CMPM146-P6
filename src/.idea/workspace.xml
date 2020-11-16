@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5ec1338f-136e-473c-9fde-6997a1c3936e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/ga.py" beforeDir="false" afterPath="$PROJECT_DIR$/ga.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
-    </list>
+    <list default="true" id="5ec1338f-136e-473c-9fde-6997a1c3936e" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,8 +13,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ga.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1395">
-              <caret line="940" column="13" selection-start-line="940" selection-start-column="8" selection-end-line="940" selection-end-column="13" />
+            <state relative-caret-position="2728">
+              <caret line="972" column="9" selection-start-line="972" selection-start-column="9" selection-end-line="972" selection-end-column="9" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
                 <element signature="e#175#576#0" />
@@ -30,26 +27,10 @@
                 <element signature="e#8411#13212#0" />
                 <element signature="e#13487#13773#0" />
                 <element signature="e#13832#17031#0" />
-                <element signature="e#18047#19043#0" />
-                <element signature="e#19076#19167#0" />
-                <element signature="e#19203#19509#0" />
-                <element signature="e#19544#19789#0" />
-                <element signature="e#20632#21013#0" />
-                <element signature="e#21137#21535#0" />
-                <element signature="e#21655#21912#0" />
-                <element signature="e#22089#23378#0" />
-                <element signature="e#22328#22575#0" />
-                <element signature="e#23940#25973#0" />
-                <element signature="e#24273#24886#0" />
-                <element signature="e#22678#23269#0" />
-                <element signature="e#23340#25255#0" />
-                <element signature="e#25314#25389#0" />
-                <element signature="e#26475#31354#0" />
-                <element signature="e#26481#27186#0" />
-                <element signature="e#27578#28089#0" />
-                <element signature="e#28133#28819#0" />
-                <element signature="e#28918#29309#0" />
-                <element signature="e#29336#29487#0" />
+                <element signature="e#16603#37311#0" />
+                <element signature="e#17039#19306#0" />
+                <element signature="e#37384#38089#0" />
+                <element signature="e#40407#43587#0" />
               </folding>
             </state>
           </provider>
@@ -222,8 +203,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ga.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1395">
-          <caret line="940" column="13" selection-start-line="940" selection-start-column="8" selection-end-line="940" selection-end-column="13" />
+        <state relative-caret-position="2728">
+          <caret line="972" column="9" selection-start-line="972" selection-start-column="9" selection-end-line="972" selection-end-column="9" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
             <element signature="e#175#576#0" />
@@ -236,26 +217,10 @@
             <element signature="e#8411#13212#0" />
             <element signature="e#13487#13773#0" />
             <element signature="e#13832#17031#0" />
-            <element signature="e#18047#19043#0" />
-            <element signature="e#19076#19167#0" />
-            <element signature="e#19203#19509#0" />
-            <element signature="e#19544#19789#0" />
-            <element signature="e#20632#21013#0" />
-            <element signature="e#21137#21535#0" />
-            <element signature="e#21655#21912#0" />
-            <element signature="e#22089#23378#0" />
-            <element signature="e#22328#22575#0" />
-            <element signature="e#23940#25973#0" />
-            <element signature="e#24273#24886#0" />
-            <element signature="e#22678#23269#0" />
-            <element signature="e#23340#25255#0" />
-            <element signature="e#25314#25389#0" />
-            <element signature="e#26475#31354#0" />
-            <element signature="e#26481#27186#0" />
-            <element signature="e#27578#28089#0" />
-            <element signature="e#28133#28819#0" />
-            <element signature="e#28918#29309#0" />
-            <element signature="e#29336#29487#0" />
+            <element signature="e#16603#37311#0" />
+            <element signature="e#17039#19306#0" />
+            <element signature="e#37384#38089#0" />
+            <element signature="e#40407#43587#0" />
           </folding>
         </state>
       </provider>

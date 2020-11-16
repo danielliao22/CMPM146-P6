@@ -763,30 +763,18 @@ class Individual_DE(object):
                                                         # location is x + 2 and the actual length is length - 1
         # 7_pipe    (x, type, y)
 
-        # weights = [
-        #     0.2,    # hole
-        #     0.5,    # platform
-        #     0.4,    # enemy
-        #     0.7,    # coin
-        #     0.5,    # block
-        #     0.2,    # qblock
-        #     0.7,    # stairs
-        #     0.6     # pipe
-        # ]
-
         weights = [
-            0,  # hole
-            0,  # platform
-            0,  # enemy
-            0,  # coin
-            0,  # block
-            0,  # qblock
-            0.5,  # stairs
-            0.6  # pipe
+            0.2,    # hole
+            0.5,    # platform
+            0.4,    # enemy
+            0.7,    # coin
+            0.5,    # block
+            0.2,    # qblock
+            0.7,    # stairs
+            0.6     # pipe
         ]
 
-        # elt_count = random.randint(8, 160)
-        elt_count = random.randint(30, 40)
+        elt_count = random.randint(8, 160)
         g = []
         stair_locs = [] # this will keep track of the locations of all the stairs as we generate them rather than having
         # to search for them every time
