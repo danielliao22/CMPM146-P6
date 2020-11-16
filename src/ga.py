@@ -454,21 +454,63 @@ class Individual_DE(object):
         # Default fitness function: Just some arbitrary combination of a few criteria.  Is it good?  Who knows?
         # STUDENT Add more metrics?
         # STUDENT Improve this with any code you like
+        #print(measurements)
         coefficients = dict(
             meaningfulJumpVariance=0.5,
             negativeSpace=0.6,
             pathPercentage=0.5,
             emptyPercentage=0.6,
             linearity=-0.5,
-            solvability=2.0
+            solvability=2.0,
+            decorationPercentage=0.0,
+            leniency=0.0,
+            meaningfulJumps=0.01,
+            jumps=0.0,
+            jumpVariance=0.0,
+            length=0.0
         )
+
         penalties = 0
         # STUDENT For example, too many stairs are unaesthetic.  Let's penalize that
         if len(list(filter(lambda de: de[1] == "6_stairs", self.genome))) > 5:
             penalties -= 2
+        
+        # penalize for too many pipes
+        if len(list(filter(lambda de: de[1] == "7_pipe", self.genome))) > 4:
+            penalties -= 2
+
+        
+
+
+        num_tallpipes = 0
+        tall_pipes_coefficient = 0.5
+        sumDescent = 0
+        sumAscent = 0
+        lackOfAscent_coefficient = 0.2
+        for de in self.genome:
+            if de[1] == "6_stairs":
+                if de[3] == 1:
+                    sumAscent += 1
+                else:
+                    sumDescent += 1
+            if de[1] == "7_pipe":
+                if de[2] > 4:
+                    num_tallpipes
+
+        # penalize if there's more descending stairs than ascending stairs
+        if sumDescent > sumAscent:
+            penalties -= lackOfAscent_coefficient
+        # penalize for pipes too tall
+        penalties -= tall_pipes_coefficient*num_tallpipes
+
+        # Reward levels with good jumps
+        jumpVal = 1
+        if measurements['meaningfulJumps'] >= 0.0:
+            jumpVal += coefficients['meaningfulJumps']*measurements['meaningfulJumps']
+
         # STUDENT If you go for the FI-2POP extra credit, you can put constraint calculation in here too and cache it in a new entry in __slots__.
         self._fitness = sum(map(lambda m: coefficients[m] * measurements[m],
-                                coefficients)) + penalties
+                                coefficients)) + penalties + jumpVal
         return self
 
     def fitness(self):
@@ -617,7 +659,17 @@ class Individual_DE(object):
     @classmethod
     def empty_individual(_cls):
         # STUDENT Maybe enhance this
-        g = []
+        elt_count = random.randint(8, 128)
+        g = [random.choice([
+            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
+            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
+            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
+            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
+            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
+            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
+            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
+            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False]))
+        ]) for i in range(elt_count)]
         return Individual_DE(g)
 
     @classmethod
@@ -637,7 +689,7 @@ class Individual_DE(object):
         return Individual_DE(g)
 
 
-Individual = Individual_Grid
+Individual = Individual_DE
 
 
 def generate_successors(population):
@@ -753,12 +805,14 @@ def ga():
         start = time.time()
         now = start
         print("Use ctrl-c to terminate this loop manually.")
-        count = 1
+        # count = 1
         # for ind in population:
         #     print("\nIndividual",count,": ")
         #     count += 1
+        #     for line in ind.to_level():
+        #         print(line)
         #     for i in ind.genome:
-        #         print(listToString(i))
+        #         print(i)
         try:
             while True:
                 now = time.time()
@@ -773,14 +827,14 @@ def ga():
                     with open("levels/last.txt", 'w') as f:
                         for row in best.to_level():
                             f.write("".join(row) + "\n")
-                    print("Best Individual:")
-                    for line in best.genome:
-                        print(listToString(line))
+                    # print("Best Individual:")
+                    # for line in best.genome:
+                    #     print(listToString(line))
                 generation += 1
                 # STUDENT Determine stopping condition
-                # stop_condition = time.time()-start > 60*3
-                # if (stop_condition):
-                #     break
+                stop_condition = time.time()-start > 60
+                if (stop_condition):
+                    break
                 # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
                 print("pop length", len(population))
                 gentime = time.time()
