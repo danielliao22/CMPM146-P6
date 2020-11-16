@@ -518,10 +518,29 @@ class Individual_DE(object):
             self.calculate_fitness()
         return self._fitness
 
+    # def get_stairs(self):
+    #     """Returns a list of columns that have stairs in them"""
+    #     # 6_stairs: (x, type, height, ascend/descend)
+    #     columns = []
+    #     for i in self.genome:
+    #         if i[1] == "6_stairs":
+    #             for j in range(i[2] - 1):
+    #                 columns.append(i[0] + j)
+    #     return columns
+    #
+    # def get_pipes(self):
+    #     """Returns a list in the form of [(pipe1x, pipe1y), (pipe2x, pipe2y)...] for all pipes in genome"""
+    #     pipes = []
+    #     for i in self.genome:
+    #         if i[1] == "7_pipe":
+    #             pipes.append((i[0], i[2]))
+    #     return pipes
+
     def mutate(self, new_genome):
         # STUDENT How does this work?  Explain it in your writeup.
         # STUDENT consider putting more constraints on this, to prevent generating weird things
         if random.random() < 0.1 and len(new_genome) > 0:
+        # if True:
             to_change = random.randint(0, len(new_genome) - 1)
             de = new_genome[to_change]
             new_de = de
@@ -620,38 +639,46 @@ class Individual_DE(object):
                 x = de[0]
                 de_type = de[1]
                 if de_type == "4_block":
+                    # (x, type, y, Break? y/n)
                     y = de[2]
                     breakable = de[3]
                     base[y][x] = "B" if breakable else "X"
                 elif de_type == "5_qblock":
+                    # (x, type, y, Shroom? y/n)
                     y = de[2]
                     has_powerup = de[3]  # boolean
                     base[y][x] = "M" if has_powerup else "?"
                 elif de_type == "3_coin":
+                    # (x, type, y)
                     y = de[2]
                     base[y][x] = "o"
                 elif de_type == "7_pipe":
+                    # (x, type, y)
                     h = de[2]
                     base[height - h - 1][x] = "T"
                     for y in range(height - h, height):
                         base[y][x] = "|"
                 elif de_type == "0_hole":
+                    # (x, type, length)
                     w = de[2]
                     for x2 in range(w):
                         base[height - 1][clip(1, x + x2, width - 2)] = "-"
                 elif de_type == "6_stairs":
+                    # (x, type, height, ascend/descend)
                     h = de[2]
                     dx = de[3]  # -1 or 1
                     for x2 in range(1, h + 1):
                         for y in range(x2 if dx == 1 else h - x2):
                             base[clip(0, height - y - 1, height - 1)][clip(1, x + x2, width - 2)] = "X"
                 elif de_type == "1_platform":
+                    # (x, type, length, y, block_type)
                     w = de[2]
                     h = de[3]
                     madeof = de[4]  # from "?", "X", "B"
                     for x2 in range(w):
                         base[clip(0, height - h - 1, height - 1)][clip(1, x + x2, width - 2)] = madeof
                 elif de_type == "2_enemy":
+                    # (x, type)
                     base[height - 2][x] = "E"
             self._level = base
         return self._level
@@ -675,17 +702,116 @@ class Individual_DE(object):
     @classmethod
     def random_individual(_cls):
         # STUDENT Maybe enhance this
-        elt_count = random.randint(8, 128)
-        g = [random.choice([
-            (random.randint(1, width - 2), "0_hole", random.randint(1, 8)),
-            (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(0, height - 1), random.choice(["?", "X", "B"])),
+
+        # 0_hole    (x, type, length)
+        # 1_platform(x, type, length, y, block_type)
+        # 2_enemy   (x, type)
+        # 3_coin    (x, type, y)
+        # 4_block   (x, type, y, Break? y/n)
+        # 5_qblock  (x, type, y, Shroom? y/n)
+        # 6_stairs  (x, type, height, ascend/descend)   NOTE: these are REALLY shittily encoded. the *actual* start
+                                                        # location is x + 2 and the actual length is length - 1
+        # 7_pipe    (x, type, y)
+
+        weights = [
+            0.2,    # hole
+            0.5,    # platform
+            0.4,    # enemy
+            0.7,    # coin
+            0.5,    # block
+            0.2,    # qblock
+            0.7,    # stairs
+            0.6     # pipe
+        ]
+
+        elt_count = random.randint(8, 160)
+        g = []
+        stair_locs = [] # this will keep track of the locations of all the stairs as we generate them rather than having
+        # to search for them every time
+
+        pipe_locs = []  # same as above but for pipes
+
+        # so elt_count is the number of elements we will *try* to add. Note that if adding an element fails, it will
+        # simply not be added. So that means that for particularly picky elements like stairs and pipes, their actual
+        # frequency will be significantly less than their weight would suggest as many attempts to add them will fail.
+        for dummy in range(elt_count):
+            elem = random.choices([
+            (random.randint(1, width - 2), "0_hole", random.randint(1, 6)),
+            (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(1, height - 1), random.choice(["?", "X", "B"])),
             (random.randint(1, width - 2), "2_enemy"),
-            (random.randint(1, width - 2), "3_coin", random.randint(0, height - 1)),
-            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
-            (random.randint(1, width - 2), "5_qblock", random.randint(0, height - 1), random.choice([True, False])),
-            (random.randint(1, width - 2), "6_stairs", random.randint(1, height - 4), random.choice([-1, 1])),
-            (random.randint(1, width - 2), "7_pipe", random.randint(2, height - 4))
-        ]) for i in range(elt_count)]
+            (random.randint(1, width - 2), "3_coin", random.randint(1, height - 1)),
+            (random.randint(1, width - 2), "4_block", random.randint(1, height - 1), random.choice([True, False])),
+            (random.randint(1, width - 2), "5_qblock", random.randint(1, height - 1), random.choice([True, False])),
+            (random.randint(1, width - 2), "6_stairs", random.randint(1, 8), random.choice([-1, 1])),
+            (random.randint(1, width - 2), "7_pipe", random.randint(2, 4))],
+            weights=weights, k=1)[0]
+
+            # Dont let elements overlap with stairs (most of the time)
+            # stairs can still be placed on top of other elements (except other stairs and pipes bc i wrote special
+            # cases below) but tbh it's not that big of a deal. It's just that if we have too many blocks above the
+            # stairs then things can pretty easily get unbeatable, so this will cut down the number of things above the
+            # stairs significantly
+            if elem[0] in stair_locs:
+                continue
+            # make sure stairs don't overlap stairs (all the time)
+            elif elem[1] == "6_stairs":
+                bad = False
+                # stairs cannot go off screen
+                if elem[0] + elem[2] - 1 > width - 2:
+                    bad = True
+                # no overlap
+                for j in range(elem[2] - 1):
+                    if elem[0] + 2 + j in stair_locs or elem[0] + 2 + j in pipe_locs:
+                        bad = True
+                if not bad:
+                    g.append(elem)
+                else:
+                    continue
+            # pipes need space
+            elif elem[1] == "7_pipe":
+                print("about to add pipe at", elem[0])
+                if elem[0] in pipe_locs or elem[0] + 1 in pipe_locs or elem [0] - 1 in pipe_locs:
+                    continue
+                else:
+                    pipe_locs.append(elem[0])
+                    g.append(elem)
+            else:
+                g.append(elem)
+
+            # special rules for stairs
+            if elem[1] == "6_stairs":
+                # If the stairs are descending, we should put some ascending stairs opposite them
+                if elem[3] == -1:
+                    length = elem[2]
+                    op_x = elem[0] - length - random.randint(1, 4)
+                    new_stair_locs = []
+                    abort = False
+                    # get location of new stairs
+                    for i in range(elem[2] - 1):
+                        new_stair_locs.append(i + op_x + 2)
+                    # these new stairs must not overlap with pipes or other stairs and must not go off screen
+                    for i in new_stair_locs:
+                        if i in stair_locs or i < 1 or i > width - 2 or i in pipe_locs:
+                            abort = True
+                            break
+                    if not abort:
+                        g.append((op_x, "6_stairs", elem[2] - 1, 1))
+                        stair_locs.append(new_stair_locs)
+                # update the list of stair locations
+                for j in range(elem[2] - 1):
+                    stair_locs.append(elem[0] + 2 + j)
+
+        # original code that im too scared to delete just in case
+        # g = [random.choice([
+        #     (random.randint(1, width - 2), "0_hole", random.randint(1, 8)),
+        #     (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(0, height - 1), random.choice(["?", "X", "B"])),
+        #     (random.randint(1, width - 2), "2_enemy"),
+        #     (random.randint(1, width - 2), "3_coin", random.randint(0, height - 1)),
+        #     (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
+        #     (random.randint(1, width - 2), "5_qblock", random.randint(0, height - 1), random.choice([True, False])),
+        #     (random.randint(1, width - 2), "6_stairs", random.randint(1, height - 4), random.choice([-1, 1])),
+        #     (random.randint(1, width - 2), "7_pipe", random.randint(2, height - 4))
+        # ]) for i in range(elt_count)]
         return Individual_DE(g)
 
 
@@ -805,14 +931,7 @@ def ga():
         start = time.time()
         now = start
         print("Use ctrl-c to terminate this loop manually.")
-        # count = 1
-        # for ind in population:
-        #     print("\nIndividual",count,": ")
-        #     count += 1
-        #     for line in ind.to_level():
-        #         print(line)
-        #     for i in ind.genome:
-        #         print(i)
+        count = 1
         try:
             while True:
                 now = time.time()
