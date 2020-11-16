@@ -476,11 +476,8 @@ class Individual_DE(object):
             penalties -= 2
         
         # penalize for too many pipes
-        if len(list(filter(lambda de: de[1] == "7_pipe", self.genome))) > 4:
+        if len(list(filter(lambda de: de[1] == "7_pipe", self.genome))) > 3:
             penalties -= 2
-
-        
-
 
         num_tallpipes = 0
         tall_pipes_coefficient = 0.5
@@ -688,14 +685,14 @@ class Individual_DE(object):
         # STUDENT Maybe enhance this
         elt_count = random.randint(8, 128)
         g = [random.choice([
-            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
-            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
-            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
-            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
-            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
-            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
-            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False])),
-            (random.randint(1, width - 2), "4_block", random.randint(0, height - 1), random.choice([True, False]))
+            (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(1, height - 1), random.choice(["?", "X", "B"])),
+            (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(1, height - 1), random.choice(["?", "X", "B"])),
+            (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(1, height - 1), random.choice(["?", "X", "B"])),
+            (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(1, height - 1), random.choice(["?", "X", "B"])),
+            (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(1, height - 1), random.choice(["?", "X", "B"])),
+            (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(1, height - 1), random.choice(["?", "X", "B"])),
+            (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(1, height - 1), random.choice(["?", "X", "B"])),
+            (random.randint(1, width - 2), "1_platform", random.randint(1, 8), random.randint(1, height - 1), random.choice(["?", "X", "B"]))
         ]) for i in range(elt_count)]
         return Individual_DE(g)
 
@@ -952,7 +949,7 @@ def ga():
                 generation += 1
                 # STUDENT Determine stopping condition
                 stop_condition = time.time()-start > 60
-                if (stop_condition):
+                if (generation > 15):
                     break
                 # STUDENT Also consider using FI-2POP as in the Sorenson & Pasquier paper
                 print("pop length", len(population))
