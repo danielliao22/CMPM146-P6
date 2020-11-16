@@ -36,9 +36,9 @@ if __name__ == "__main__":
     #     print(listToString(i))
 
     Individual = Individual_DE
-    random.seed(7)
+    random.seed(16)
     ind = Individual.random_individual()
-    print("\nIndividual:")
+    print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIndividual:")
     # for i in ind.genome:
     #     print(i)
     lev = ind.to_level()
